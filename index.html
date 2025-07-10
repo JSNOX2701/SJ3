@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Constelación de Nuestro Amor</title>
 
   <!-- TailwindCSS -->
@@ -21,7 +21,8 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #0f172a;
-      overflow: hidden;
+      overflow-x: hidden;
+      touch-action: manipulation;
     }
     .font-romantic {
       font-family: 'Great Vibes', cursive;
@@ -49,8 +50,8 @@
   <!-- Popup inicial -->
   <div id="popup" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-center z-50 px-4">
     <h1 class="text-6xl font-romantic text-pink-300 mb-4">Salomé ✨</h1>
-    <p class="text-white text-xl max-w-lg">El cielo guarda tres estrellas, una por cada mes que has iluminado mi vida con tu dulzura, tu ternura y tu risa hermosa. ¿Quieres descubrirlas?</p>
-    <button onclick="iniciar()" class="mt-6 px-6 py-2 bg-pink-600 text-white rounded-full hover:bg-pink-700">Ver constelación</button>
+    <p class="text-white text-xl max-w-lg mb-6">El cielo guarda tres estrellas, una por cada mes que has iluminado mi vida con tu dulzura, tu ternura y tu forma de hacerme sentir tan cerca aunque estemos lejos. Esta página es para ti, para recordarte cuánto te amo y lo importante que eres. ¿Quieres descubrirlas conmigo?</p>
+    <button id="botonInicio" class="px-6 py-2 bg-pink-600 text-white rounded-full hover:bg-pink-700">Reproducir y Ver constelación</button>
   </div>
 
   <!-- Música -->
@@ -65,7 +66,7 @@
   </div>
 
   <!-- Estrellas -->
-  <div id="estrellas" class="flex flex-col md:flex-row justify-center items-center gap-10 mt-12">
+  <div id="estrellas" class="flex flex-col md:flex-row justify-center items-center gap-10 mt-12 px-4">
     <div class="text-center">
       <p class="text-white text-2xl font-romantic mb-2">Mes 1</p>
       <div class="estrella" onclick="mostrarNota(0)">⭐</div>
@@ -81,35 +82,42 @@
   </div>
 
   <!-- Estrella final (oculta al inicio) -->
+  <div id="final-popup" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-center z-50 px-4 hidden">
+    <p class="text-white text-2xl font-romantic mb-6">Ha aparecido una última estrella... baja un poco y mírala 💖</p>
+    <button onclick="cerrarFinalPopup()" class="px-6 py-2 bg-pink-600 text-white rounded-full hover:bg-pink-700">Ver estrella final</button>
+  </div>
+
   <div id="final-container" class="text-center mt-16 hidden">
     <p class="text-pink-200 text-2xl mb-4 animate-pulse font-romantic">Has descubierto cada estrella... toca esta para un último mensaje ✨</p>
-    <div class="estrella text-7xl" onclick="mostrarNota(3)">💖</div>
+    <div class="estrella text-7xl animate-pulse" onclick="mostrarNota(3)">💖</div>
   </div>
 
   <!-- Nota -->
   <div id="nota" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-white p-6 rounded-xl shadow-xl max-w-sm w-full hidden z-40">
-    <p id="textoNota" class="text-center text-gray-800 whitespace-pre-line text-base"></p>
+    <p id="textoNota" class="text-center text-gray-800 whitespace-pre-line text-lg leading-relaxed"></p>
     <button onclick="cerrarNota()" class="mt-4 mx-auto block px-4 py-1 bg-pink-500 text-white rounded hover:bg-pink-600">Cerrar</button>
   </div>
 
   <script>
+    const botonInicio = document.getElementById("botonInicio");
+    botonInicio.addEventListener("click", () => {
+      document.getElementById('popup').style.display = 'none';
+      const audio = document.getElementById('musica');
+      audio.play().catch(() => console.log("Autoplay bloqueado"));
+    });
+
     const notas = [
-      `Ese primer mes fue como ver una estrella fugaz por primera vez. Brillante, inesperada, mágica. Desde el instante en que apareciste, comencé a ver belleza en lugares donde antes había oscuridad. Cada palabra tuya, cada mirada, cada sonrisa... fueron como luz entrando en mi alma.`,
+      `Ese primer mes fue como descubrir un universo oculto, uno donde tú eras el sol y cada uno de tus mensajes era una pequeña chispa que me devolvía la esperanza. Aunque no pueda verte físicamente, tus palabras me abrazaban desde la distancia. Tu voz por llamada, tus mensajes de buenos días, tus bromas, tus penas... todo lo he guardado en mi mente como un tesoro. Fuiste calma en medio del caos, y desde ese momento supe que algo especial se estaba formando.`,
 
-      `El segundo mes fue la certeza. Ya no eras una estrella pasajera: te convertiste en mi constelación favorita. En tus ojos encontré mi hogar, en tu voz, mi refugio. Aprendí a admirarte, a sentirte, a imaginar un futuro donde estemos juntos bajo este mismo cielo, tomados de la mano, soñando lo mismo.`,
+      `El segundo mes fue cuando el lazo se hizo más fuerte. Ya no eras solo alguien que me gustaba: eras alguien que me importaba profundamente. Y cada noche, mientras te leía o escuchaba, me sentía más cerca de ti que de nadie más. Aunque la distancia a veces dolía, había algo en tu forma de compartir tu mundo conmigo que hacía que la espera valiera la pena. Me fui acostumbrando a tenerte presente en mi día a día, como una constelación que nunca cambia de lugar, que siempre está ahí para guiarme.`,
 
-      `Y hoy... tres meses después, me doy cuenta de que tu existencia ha transformado la mía. Te pienso en cada silencio, te siento en cada latido, y te quiero en cada universo posible. Eres la mejor parte de mis días, la luz que guía mi noche, mi amor, mi todo.`,
+      `El tercer mes llegó con intensidad. Ya no solo te pensaba, ya te extrañaba. Te imaginaba riendo, escribiendo, contando tus cosas. Tus ojos, aunque solo los vi por fotos o videos, los sentía cerca. Me has dado motivos para mirar el cielo cada noche y pensar en ti. Has sido refugio, ilusión, y sobre todo, compañía. Me enamoré no solo de lo que eres, sino de lo que despiertas en mí. De lo que construimos sin siquiera tocarnos.`,
 
       `🌌 Mi amor eterno\n
-      Salomé, esto no es solo un regalo. Es una promesa. Tres meses son solo el comienzo de un viaje estelar donde cada estrella será un recuerdo, cada luna una sonrisa tuya y cada noche un "te amo" dicho bajito antes de dormir. Gracias por existir, por amar, y por permitirme amarte. Tu universo, Josué.`
+      Salomé, tres meses contigo han sido un viaje profundo de emociones. No hay distancia capaz de reducir lo que siento por ti. Estás presente en cada momento de calma, en cada risa que me haces sacar, en cada silencio que llenas con tus "te amo". Esto es solo el inicio. Te amo por lo que eres y por lo que creamos, y sé que cuando al fin nos abracemos, el universo mismo se estremecerá. Por ahora, este cielo es nuestro. Tu universo, Josué.`
     ];
 
     let vistas = [false, false, false];
-
-    function iniciar() {
-      document.getElementById('popup').style.display = 'none';
-      document.getElementById('musica').play();
-    }
 
     function mostrarNota(i) {
       const nota = document.getElementById("nota");
@@ -120,7 +128,7 @@
       if (i < 3) {
         vistas[i] = true;
         if (vistas.every(v => v)) {
-          document.getElementById('final-container').classList.remove('hidden');
+          document.getElementById('final-popup').classList.remove('hidden');
         }
       }
     }
@@ -130,18 +138,31 @@
       gsap.to(nota, {opacity: 0, y: 30, duration: 0.3, onComplete: () => nota.style.display = 'none'});
     }
 
+    function cerrarFinalPopup() {
+      document.getElementById('final-popup').classList.add('hidden');
+      document.getElementById('final-container').classList.remove('hidden');
+      document.getElementById('final-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
     tsParticles.load("particles-js", {
       particles: {
-        number: { value: 120 },
-        color: { value: "#ffffff" },
+        number: { value: 180 },
+        color: { value: ["#ffffff", "#ffccff", "#99e6ff"] },
         shape: { type: "circle" },
-        opacity: { value: 0.15 },
-        size: { value: 2 },
+        opacity: { value: 0.4 },
+        size: { value: { min: 1, max: 3 } },
         move: {
           enable: true,
-          speed: 0.1,
+          speed: 0.2,
           direction: "none",
           outModes: { default: "out" }
+        },
+        twinkle: {
+          particles: {
+            enable: true,
+            frequency: 0.05,
+            opacity: 1
+          }
         }
       },
       detectRetina: true
